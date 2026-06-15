@@ -6,6 +6,7 @@ import 'screens/hatch_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/log_screen.dart';
 import 'screens/moon_screen.dart';
+import 'screens/weather_screen.dart';
 import 'theme.dart';
 import 'widgets/responsive.dart';
 
@@ -43,6 +44,7 @@ class _RootNavState extends State<RootNav> {
   static const _screens = [
     HomeScreen(),
     HatchScreen(),
+    WeatherScreen(),
     MoonScreen(),
     LogScreen(),
   ];
@@ -50,6 +52,7 @@ class _RootNavState extends State<RootNav> {
   static const _destinations = [
     _NavItem('Home', Icons.home_outlined, Icons.home),
     _NavItem('Hatches', Icons.bug_report_outlined, Icons.bug_report),
+    _NavItem('Weather', Icons.cloud_outlined, Icons.cloud),
     _NavItem('Moon', Icons.nightlight_outlined, Icons.nightlight_round),
     _NavItem('Log', Icons.menu_book_outlined, Icons.menu_book),
   ];

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 
 import '../models/fishing_log.dart';
+import '../models/forecast.dart';
 import '../models/hatch.dart';
 import '../models/hydro_station.dart';
 import '../models/moon_info.dart';
@@ -27,6 +28,14 @@ class Conditions {
   final FishingScore score;
   final Weather? weather;
   final String? weatherError;
+  final Forecast? forecast;
+  final String? forecastError;
+
+  /// Coordinates the weather/forecast were fetched for, and a label for them
+  /// (the selected gauge station, or the river).
+  final double weatherLatitude;
+  final double weatherLongitude;
+  final String weatherLocationLabel;
 
   /// Set when the live IMGW gauge could not be reached and a stub reading was
   /// used instead.
@@ -38,8 +47,13 @@ class Conditions {
     required this.activeHatches,
     required this.recommendedFlies,
     required this.score,
+    required this.weatherLatitude,
+    required this.weatherLongitude,
+    required this.weatherLocationLabel,
     this.weather,
     this.weatherError,
+    this.forecast,
+    this.forecastError,
     this.waterError,
   });
 }
@@ -170,6 +184,10 @@ class AppState extends ChangeNotifier {
       water = _waterService.readingFor(river, now);
     }
 
+    final weatherLat = station?.latitude ?? river.latitude;
+    final weatherLon = station?.longitude ?? river.longitude;
+    final weatherLabel = station?.name ?? river.name;
+
     final moon = _moonService.compute(
       when: now,
       latitude: river.latitude,
@@ -188,13 +206,23 @@ class AppState extends ChangeNotifier {
 
     Weather? weather;
     String? weatherError;
+    Forecast? forecast;
+    String? forecastError;
     try {
       weather = await _weatherService.fetchCurrent(
-        latitude: river.latitude,
-        longitude: river.longitude,
+        latitude: weatherLat,
+        longitude: weatherLon,
       );
     } catch (e) {
       weatherError = 'Weather unavailable';
+    }
+    try {
+      forecast = await _weatherService.fetchForecast(
+        latitude: weatherLat,
+        longitude: weatherLon,
+      );
+    } catch (e) {
+      forecastError = 'Forecast unavailable';
     }
 
     _conditions = Conditions(
@@ -205,6 +233,11 @@ class AppState extends ChangeNotifier {
       score: score,
       weather: weather,
       weatherError: weatherError,
+      forecast: forecast,
+      forecastError: forecastError,
+      weatherLatitude: weatherLat,
+      weatherLongitude: weatherLon,
+      weatherLocationLabel: weatherLabel,
       waterError: waterError,
     );
     _loading = false;

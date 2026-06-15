@@ -6,6 +6,8 @@ class HydroStation {
   final String id;
   final String name;
   final String riverId;
+  final double latitude;
+  final double longitude;
   final double normalLevelCm;
   final double normalFlowCms;
 
@@ -13,6 +15,8 @@ class HydroStation {
     required this.id,
     required this.name,
     required this.riverId,
+    required this.latitude,
+    required this.longitude,
     required this.normalLevelCm,
     required this.normalFlowCms,
   });
