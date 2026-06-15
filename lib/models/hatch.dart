@@ -4,20 +4,20 @@ enum HatchProbability { low, medium, high }
 
 extension HatchProbabilityLabel on HatchProbability {
   String get label => switch (this) {
-        HatchProbability.low => 'Low',
-        HatchProbability.medium => 'Medium',
-        HatchProbability.high => 'High',
-      };
+    HatchProbability.low => 'Low',
+    HatchProbability.medium => 'Medium',
+    HatchProbability.high => 'High',
+  };
 }
 
 extension HatchStageLabel on HatchStage {
   String get label => switch (this) {
-        HatchStage.larva => 'Larva',
-        HatchStage.nymph => 'Nymph',
-        HatchStage.emerger => 'Emerger',
-        HatchStage.adult => 'Adult',
-        HatchStage.spinner => 'Spinner',
-      };
+    HatchStage.larva => 'Larva',
+    HatchStage.nymph => 'Nymph',
+    HatchStage.emerger => 'Emerger',
+    HatchStage.adult => 'Adult',
+    HatchStage.spinner => 'Spinner',
+  };
 }
 
 class Hatch {

@@ -17,13 +17,12 @@ class WeatherService {
     final uri = Uri.https('api.open-meteo.com', '/v1/forecast', {
       'latitude': latitude.toStringAsFixed(4),
       'longitude': longitude.toStringAsFixed(4),
-      'current':
-          'temperature_2m,precipitation,weather_code,wind_speed_10m',
+      'current': 'temperature_2m,precipitation,weather_code,wind_speed_10m',
     });
 
-    final response = await _client.get(uri).timeout(
-          const Duration(seconds: 12),
-        );
+    final response = await _client
+        .get(uri)
+        .timeout(const Duration(seconds: 12));
     if (response.statusCode != 200) {
       throw WeatherException('Open-Meteo returned ${response.statusCode}');
     }

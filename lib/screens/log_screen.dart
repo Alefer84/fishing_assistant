@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../models/fishing_log.dart';
 import '../providers/app_state.dart';
 import '../utils/formatting.dart';
+import '../widgets/responsive.dart';
 import 'add_log_screen.dart';
 
 class LogScreen extends StatelessWidget {
@@ -18,20 +19,22 @@ class LogScreen extends StatelessWidget {
       appBar: AppBar(title: const Text('Fishing Log')),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
-          Navigator.of(context).push(
-            MaterialPageRoute(builder: (_) => const AddLogScreen()),
-          );
+          Navigator.of(
+            context,
+          ).push(MaterialPageRoute(builder: (_) => const AddLogScreen()));
         },
         icon: const Icon(Icons.add),
         label: const Text('New Entry'),
       ),
-      body: logs.isEmpty
-          ? const _EmptyState()
-          : ListView.builder(
-              padding: const EdgeInsets.all(16),
-              itemCount: logs.length,
-              itemBuilder: (context, i) => _LogTile(log: logs[i]),
-            ),
+      body: ContentBody(
+        child: logs.isEmpty
+            ? const _EmptyState()
+            : ListView.builder(
+                padding: const EdgeInsets.all(16),
+                itemCount: logs.length,
+                itemBuilder: (context, i) => _LogTile(log: logs[i]),
+              ),
+      ),
     );
   }
 }
@@ -49,8 +52,10 @@ class _EmptyState extends StatelessWidget {
           const SizedBox(height: 12),
           const Text('No entries yet'),
           const SizedBox(height: 4),
-          Text('Tap "New Entry" to record a trip',
-              style: Theme.of(context).textTheme.bodySmall),
+          Text(
+            'Tap "New Entry" to record a trip',
+            style: Theme.of(context).textTheme.bodySmall,
+          ),
         ],
       ),
     );
@@ -80,8 +85,7 @@ class _LogTile extends StatelessWidget {
               ].whereType<String>().join(' • '),
             ),
             if (log.notes != null && log.notes!.isNotEmpty)
-              Text(log.notes!,
-                  style: Theme.of(context).textTheme.bodySmall),
+              Text(log.notes!, style: Theme.of(context).textTheme.bodySmall),
           ],
         ),
         isThreeLine: true,

@@ -6,6 +6,7 @@ import '../models/moon_info.dart';
 import '../models/river.dart';
 import '../providers/app_state.dart';
 import '../utils/formatting.dart';
+import '../widgets/responsive.dart';
 
 class AddLogScreen extends StatefulWidget {
   const AddLogScreen({super.key});
@@ -78,62 +79,72 @@ class _AddLogScreenState extends State<AddLogScreen> {
         actions: [
           TextButton(
             onPressed: _save,
-            child: const Text('SAVE',
-                style: TextStyle(color: Colors.white)),
+            child: const Text('SAVE', style: TextStyle(color: Colors.white)),
           ),
         ],
       ),
-      body: Form(
-        key: _formKey,
-        child: ListView(
-          padding: const EdgeInsets.all(16),
-          children: [
-            DropdownButtonFormField<String>(
-              initialValue: _river.id,
-              decoration: const InputDecoration(labelText: 'River'),
-              items: state.rivers
-                  .map((r) =>
-                      DropdownMenuItem(value: r.id, child: Text(r.name)))
-                  .toList(),
-              onChanged: (id) => setState(
-                  () => _river = state.riverService.riverById(id!)),
-            ),
-            const SizedBox(height: 12),
-            ListTile(
-              contentPadding: EdgeInsets.zero,
-              title: const Text('Date'),
-              subtitle: Text(formatDate(_date)),
-              trailing: const Icon(Icons.calendar_today),
-              onTap: () async {
-                final picked = await showDatePicker(
-                  context: context,
-                  initialDate: _date,
-                  firstDate: DateTime(2015),
-                  lastDate: DateTime.now(),
-                );
-                if (picked != null) setState(() => _date = picked);
-              },
-            ),
-            _field(_weather, 'Weather', hint: 'e.g. Overcast, light rain'),
-            _field(_waterLevel, 'Water level (m)',
-                keyboard: TextInputType.number),
-            _field(_fly, 'Fly used', hint: 'e.g. BWO Emerger #18'),
-            _field(_species, 'Fish species', hint: 'e.g. Brown trout'),
-            _field(_count, 'Fish caught',
-                keyboard: TextInputType.number),
-            _field(_length, 'Largest fish (cm)',
-                keyboard: TextInputType.number),
-            _field(_notes, 'Notes', maxLines: 3),
-          ],
+      body: ContentBody(
+        child: Form(
+          key: _formKey,
+          child: ListView(
+            padding: const EdgeInsets.all(16),
+            children: [
+              DropdownButtonFormField<String>(
+                initialValue: _river.id,
+                decoration: const InputDecoration(labelText: 'River'),
+                items: state.rivers
+                    .map(
+                      (r) => DropdownMenuItem(value: r.id, child: Text(r.name)),
+                    )
+                    .toList(),
+                onChanged: (id) =>
+                    setState(() => _river = state.riverService.riverById(id!)),
+              ),
+              const SizedBox(height: 12),
+              ListTile(
+                contentPadding: EdgeInsets.zero,
+                title: const Text('Date'),
+                subtitle: Text(formatDate(_date)),
+                trailing: const Icon(Icons.calendar_today),
+                onTap: () async {
+                  final picked = await showDatePicker(
+                    context: context,
+                    initialDate: _date,
+                    firstDate: DateTime(2015),
+                    lastDate: DateTime.now(),
+                  );
+                  if (picked != null) setState(() => _date = picked);
+                },
+              ),
+              _field(_weather, 'Weather', hint: 'e.g. Overcast, light rain'),
+              _field(
+                _waterLevel,
+                'Water level (m)',
+                keyboard: TextInputType.number,
+              ),
+              _field(_fly, 'Fly used', hint: 'e.g. BWO Emerger #18'),
+              _field(_species, 'Fish species', hint: 'e.g. Brown trout'),
+              _field(_count, 'Fish caught', keyboard: TextInputType.number),
+              _field(
+                _length,
+                'Largest fish (cm)',
+                keyboard: TextInputType.number,
+              ),
+              _field(_notes, 'Notes', maxLines: 3),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget _field(TextEditingController c, String label,
-      {String? hint,
-      TextInputType? keyboard,
-      int maxLines = 1}) {
+  Widget _field(
+    TextEditingController c,
+    String label, {
+    String? hint,
+    TextInputType? keyboard,
+    int maxLines = 1,
+  }) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: TextFormField(

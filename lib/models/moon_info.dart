@@ -13,26 +13,26 @@ enum MoonPhase {
 
 extension MoonPhaseDisplay on MoonPhase {
   String get label => switch (this) {
-        MoonPhase.newMoon => 'New Moon',
-        MoonPhase.waxingCrescent => 'Waxing Crescent',
-        MoonPhase.firstQuarter => 'First Quarter',
-        MoonPhase.waxingGibbous => 'Waxing Gibbous',
-        MoonPhase.fullMoon => 'Full Moon',
-        MoonPhase.waningGibbous => 'Waning Gibbous',
-        MoonPhase.lastQuarter => 'Last Quarter',
-        MoonPhase.waningCrescent => 'Waning Crescent',
-      };
+    MoonPhase.newMoon => 'New Moon',
+    MoonPhase.waxingCrescent => 'Waxing Crescent',
+    MoonPhase.firstQuarter => 'First Quarter',
+    MoonPhase.waxingGibbous => 'Waxing Gibbous',
+    MoonPhase.fullMoon => 'Full Moon',
+    MoonPhase.waningGibbous => 'Waning Gibbous',
+    MoonPhase.lastQuarter => 'Last Quarter',
+    MoonPhase.waningCrescent => 'Waning Crescent',
+  };
 
   String get emoji => switch (this) {
-        MoonPhase.newMoon => '🌑',
-        MoonPhase.waxingCrescent => '🌒',
-        MoonPhase.firstQuarter => '🌓',
-        MoonPhase.waxingGibbous => '🌔',
-        MoonPhase.fullMoon => '🌕',
-        MoonPhase.waningGibbous => '🌖',
-        MoonPhase.lastQuarter => '🌗',
-        MoonPhase.waningCrescent => '🌘',
-      };
+    MoonPhase.newMoon => '🌑',
+    MoonPhase.waxingCrescent => '🌒',
+    MoonPhase.firstQuarter => '🌓',
+    MoonPhase.waxingGibbous => '🌔',
+    MoonPhase.fullMoon => '🌕',
+    MoonPhase.waningGibbous => '🌖',
+    MoonPhase.lastQuarter => '🌗',
+    MoonPhase.waningCrescent => '🌘',
+  };
 
   /// Solunar theory rates new and full moons as the strongest periods.
   bool get isFavorable =>

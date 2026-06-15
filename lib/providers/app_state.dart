@@ -52,13 +52,13 @@ class AppState extends ChangeNotifier {
     ScoreService? scoreService,
     WeatherService? weatherService,
     LogService? logService,
-  })  : _riverService = riverService ?? RiverService(),
-        _waterService = waterService ?? const WaterService(),
-        _moonService = moonService ?? const MoonService(),
-        _hatchService = hatchService ?? const HatchService(),
-        _scoreService = scoreService ?? const ScoreService(),
-        _weatherService = weatherService ?? WeatherService(),
-        _logService = logService ?? LogService();
+  }) : _riverService = riverService ?? RiverService(),
+       _waterService = waterService ?? const WaterService(),
+       _moonService = moonService ?? const MoonService(),
+       _hatchService = hatchService ?? const HatchService(),
+       _scoreService = scoreService ?? const ScoreService(),
+       _weatherService = weatherService ?? WeatherService(),
+       _logService = logService ?? LogService();
 
   River _selectedRiver = RiverService.rivers.first;
   River get selectedRiver => _selectedRiver;
@@ -113,10 +113,11 @@ class AppState extends ChangeNotifier {
       latitude: river.latitude,
       longitude: river.longitude,
     );
-    final activeHatches =
-        _hatchService.activeHatches(river.id, now.month);
-    final recommendedFlies =
-        _hatchService.recommendedFlies(river.id, now.month);
+    final activeHatches = _hatchService.activeHatches(river.id, now.month);
+    final recommendedFlies = _hatchService.recommendedFlies(
+      river.id,
+      now.month,
+    );
     final score = _scoreService.compute(
       water: water,
       moon: moon,

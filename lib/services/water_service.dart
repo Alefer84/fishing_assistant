@@ -13,7 +13,7 @@ class WaterService {
 
   /// Per-river seasonal baselines (normal level / flow / temperature).
   static const Map<String, ({double level, double flow, double temp})>
-      _baselines = {
+  _baselines = {
     'san': (level: 1.40, flow: 250, temp: 13),
     'dunajec': (level: 1.20, flow: 300, temp: 11),
     'wisla': (level: 2.10, flow: 480, temp: 15),
@@ -21,13 +21,12 @@ class WaterService {
   };
 
   WaterReading readingFor(River river, DateTime date) {
-    final base = _baselines[river.id] ??
-        (level: 1.30, flow: 240.0, temp: 13.0);
+    final base = _baselines[river.id] ?? (level: 1.30, flow: 240.0, temp: 13.0);
 
     // Deterministic pseudo-random variation seeded by river + day so the
     // numbers are consistent within a day but vary day to day.
-    final seed = river.id.hashCode ^
-        (date.year * 10000 + date.month * 100 + date.day);
+    final seed =
+        river.id.hashCode ^ (date.year * 10000 + date.month * 100 + date.day);
     final rng = math.Random(seed);
 
     final flowFactor = 0.75 + rng.nextDouble() * 0.6; // 0.75x – 1.35x

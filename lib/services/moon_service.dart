@@ -75,8 +75,7 @@ class MoonService {
   static double _julianDay(DateTime utc) {
     var y = utc.year;
     var m = utc.month;
-    final d = utc.day +
-        (utc.hour + utc.minute / 60 + utc.second / 3600) / 24;
+    final d = utc.day + (utc.hour + utc.minute / 60 + utc.second / 3600) / 24;
     if (m <= 2) {
       y -= 1;
       m += 12;
@@ -110,7 +109,8 @@ class MoonService {
 
     var ecc = mm + _deg(e) * math.sin(_rad(mm)) * (1 + e * math.cos(_rad(mm)));
     for (var k = 0; k < 5; k++) {
-      ecc = ecc -
+      ecc =
+          ecc -
           (ecc - _deg(e) * math.sin(_rad(ecc)) - mm) /
               (1 - e * math.cos(_rad(ecc)));
     }
@@ -120,10 +120,12 @@ class MoonService {
     final v = _rev(_deg(math.atan2(yv, xv)));
     final r = math.sqrt(xv * xv + yv * yv);
 
-    final xh = r *
+    final xh =
+        r *
         (math.cos(_rad(n)) * math.cos(_rad(v + w)) -
             math.sin(_rad(n)) * math.sin(_rad(v + w)) * math.cos(_rad(i)));
-    final yh = r *
+    final yh =
+        r *
         (math.sin(_rad(n)) * math.cos(_rad(v + w)) +
             math.cos(_rad(n)) * math.sin(_rad(v + w)) * math.cos(_rad(i)));
     final zh = r * (math.sin(_rad(v + w)) * math.sin(_rad(i)));
@@ -139,7 +141,8 @@ class MoonService {
     final dEl = _rev(lm - ls);
     final f = _rev(lm - n);
 
-    lon += -1.274 * math.sin(_rad(mm - 2 * dEl)) +
+    lon +=
+        -1.274 * math.sin(_rad(mm - 2 * dEl)) +
         0.658 * math.sin(_rad(2 * dEl)) -
         0.186 * math.sin(_rad(ms)) -
         0.059 * math.sin(_rad(2 * mm - 2 * dEl)) -
@@ -152,7 +155,8 @@ class MoonService {
         0.015 * math.sin(_rad(2 * f - 2 * dEl)) +
         0.011 * math.sin(_rad(mm - 4 * dEl));
 
-    lat += -0.173 * math.sin(_rad(f - 2 * dEl)) -
+    lat +=
+        -0.173 * math.sin(_rad(f - 2 * dEl)) -
         0.055 * math.sin(_rad(mm - f - 2 * dEl)) -
         0.046 * math.sin(_rad(mm + f - 2 * dEl)) +
         0.033 * math.sin(_rad(f + 2 * dEl)) +
@@ -186,9 +190,7 @@ class MoonService {
 
     final alt = math.asin(
       math.sin(_rad(lat)) * math.sin(_rad(pos.dec)) +
-          math.cos(_rad(lat)) *
-              math.cos(_rad(pos.dec)) *
-              math.cos(_rad(ha)),
+          math.cos(_rad(lat)) * math.cos(_rad(pos.dec)) * math.cos(_rad(ha)),
     );
     return _deg(alt);
   }
@@ -207,17 +209,37 @@ class MoonService {
 
     const stepMinutes = 5;
     var prevAlt = _altitude(start.toUtc(), lat, lon);
-    for (var minutes = stepMinutes; minutes <= 24 * 60; minutes += stepMinutes) {
+    for (
+      var minutes = stepMinutes;
+      minutes <= 24 * 60;
+      minutes += stepMinutes
+    ) {
       final t = start.add(Duration(minutes: minutes));
       final alt = _altitude(t.toUtc(), lat, lon);
 
       if (rise == null && prevAlt < h0 && alt >= h0) {
-        rise = _interpolateCrossing(start, minutes - stepMinutes, minutes,
-            prevAlt, alt, h0, lat, lon);
+        rise = _interpolateCrossing(
+          start,
+          minutes - stepMinutes,
+          minutes,
+          prevAlt,
+          alt,
+          h0,
+          lat,
+          lon,
+        );
       }
       if (setTime == null && prevAlt >= h0 && alt < h0) {
-        setTime = _interpolateCrossing(start, minutes - stepMinutes, minutes,
-            prevAlt, alt, h0, lat, lon);
+        setTime = _interpolateCrossing(
+          start,
+          minutes - stepMinutes,
+          minutes,
+          prevAlt,
+          alt,
+          h0,
+          lat,
+          lon,
+        );
       }
       if (alt > maxAlt) {
         maxAlt = alt;
@@ -238,8 +260,16 @@ class MoonService {
     );
   }
 
-  DateTime _interpolateCrossing(DateTime start, int m0, int m1, double a0,
-      double a1, double target, double lat, double lon) {
+  DateTime _interpolateCrossing(
+    DateTime start,
+    int m0,
+    int m1,
+    double a0,
+    double a1,
+    double target,
+    double lat,
+    double lon,
+  ) {
     final frac = (target - a0) / (a1 - a0);
     final minutes = m0 + (m1 - m0) * frac;
     return start.add(Duration(seconds: (minutes * 60).round()));
@@ -250,22 +280,28 @@ class MoonService {
 
     void addMajor(DateTime? center) {
       if (center == null) return;
-      periods.add(SolunarPeriod(
-        start: TimeOfDay.fromDateTime(
-            center.subtract(const Duration(hours: 1))),
-        end: TimeOfDay.fromDateTime(center.add(const Duration(hours: 1))),
-        isMajor: true,
-      ));
+      periods.add(
+        SolunarPeriod(
+          start: TimeOfDay.fromDateTime(
+            center.subtract(const Duration(hours: 1)),
+          ),
+          end: TimeOfDay.fromDateTime(center.add(const Duration(hours: 1))),
+          isMajor: true,
+        ),
+      );
     }
 
     void addMinor(DateTime? center) {
       if (center == null) return;
-      periods.add(SolunarPeriod(
-        start: TimeOfDay.fromDateTime(
-            center.subtract(const Duration(minutes: 30))),
-        end: TimeOfDay.fromDateTime(center.add(const Duration(minutes: 30))),
-        isMajor: false,
-      ));
+      periods.add(
+        SolunarPeriod(
+          start: TimeOfDay.fromDateTime(
+            center.subtract(const Duration(minutes: 30)),
+          ),
+          end: TimeOfDay.fromDateTime(center.add(const Duration(minutes: 30))),
+          isMajor: false,
+        ),
+      );
     }
 
     addMajor(e.upperTransit);

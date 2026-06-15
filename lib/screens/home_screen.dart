@@ -6,6 +6,7 @@ import '../models/moon_info.dart';
 import '../providers/app_state.dart';
 import '../theme.dart';
 import '../utils/formatting.dart';
+import '../widgets/responsive.dart';
 import '../widgets/section_card.dart';
 import 'river_screen.dart';
 
@@ -29,37 +30,39 @@ class HomeScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: RefreshIndicator(
-        onRefresh: state.refreshConditions,
-        child: ListView(
-          padding: const EdgeInsets.all(16),
-          children: [
-            _RiverHeader(),
-            const SizedBox(height: 12),
-            if (state.loading && conditions == null)
-              const Padding(
-                padding: EdgeInsets.symmetric(vertical: 80),
-                child: Center(child: CircularProgressIndicator()),
-              )
-            else if (conditions != null) ...[
-              _ScoreCard(),
+      body: ContentBody(
+        child: RefreshIndicator(
+          onRefresh: state.refreshConditions,
+          child: ListView(
+            padding: const EdgeInsets.all(16),
+            children: [
+              _RiverHeader(),
               const SizedBox(height: 12),
-              _WaterCard(),
-              const SizedBox(height: 12),
-              _WeatherMoonRow(),
-              const SizedBox(height: 12),
-              _HatchCard(),
-              const SizedBox(height: 12),
-              _FliesCard(),
-              const SizedBox(height: 24),
-              Center(
-                child: Text(
-                  'Conditions for ${river.name} • ${formatDate(DateTime.now())}',
-                  style: Theme.of(context).textTheme.bodySmall,
+              if (state.loading && conditions == null)
+                const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 80),
+                  child: Center(child: CircularProgressIndicator()),
+                )
+              else if (conditions != null) ...[
+                _ScoreCard(),
+                const SizedBox(height: 12),
+                _WaterCard(),
+                const SizedBox(height: 12),
+                _WeatherMoonRow(),
+                const SizedBox(height: 12),
+                _HatchCard(),
+                const SizedBox(height: 12),
+                _FliesCard(),
+                const SizedBox(height: 24),
+                Center(
+                  child: Text(
+                    'Conditions for ${river.name} • ${formatDate(DateTime.now())}',
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
                 ),
-              ),
+              ],
             ],
-          ],
+          ),
         ),
       ),
     );
@@ -77,14 +80,16 @@ class _RiverHeader extends StatelessWidget {
           backgroundColor: AppTheme.accent,
           child: Icon(Icons.water, color: Colors.white),
         ),
-        title: Text(river.name,
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+        title: Text(
+          river.name,
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+        ),
         subtitle: Text(river.country),
         trailing: TextButton.icon(
           onPressed: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(builder: (_) => const RiverScreen()),
-            );
+            Navigator.of(
+              context,
+            ).push(MaterialPageRoute(builder: (_) => const RiverScreen()));
           },
           icon: const Icon(Icons.swap_horiz),
           label: const Text('Change'),
@@ -124,11 +129,14 @@ class _ScoreCard extends StatelessWidget {
                   Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text('${score.total}',
-                          style: TextStyle(
-                              fontSize: 26,
-                              fontWeight: FontWeight.bold,
-                              color: color)),
+                      Text(
+                        '${score.total}',
+                        style: TextStyle(
+                          fontSize: 26,
+                          fontWeight: FontWeight.bold,
+                          color: color,
+                        ),
+                      ),
                       const Text('/10', style: TextStyle(fontSize: 12)),
                     ],
                   ),
@@ -140,34 +148,41 @@ class _ScoreCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Fishing Score',
-                      style: Theme.of(context).textTheme.titleMedium),
-                  Text(score.rating,
-                      style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: color)),
+                  Text(
+                    'Fishing Score',
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                  Text(
+                    score.rating,
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: color,
+                    ),
+                  ),
                   const SizedBox(height: 8),
-                  ...score.factors.map((f) => Row(
-                        children: [
-                          Icon(
-                            f.achieved
-                                ? Icons.check_circle
-                                : Icons.remove_circle_outline,
-                            size: 14,
-                            color: f.achieved
-                                ? AppTheme.accent
-                                : Colors.grey.shade400,
+                  ...score.factors.map(
+                    (f) => Row(
+                      children: [
+                        Icon(
+                          f.achieved
+                              ? Icons.check_circle
+                              : Icons.remove_circle_outline,
+                          size: 14,
+                          color: f.achieved
+                              ? AppTheme.accent
+                              : Colors.grey.shade400,
+                        ),
+                        const SizedBox(width: 6),
+                        Expanded(
+                          child: Text(
+                            '${f.label} (+${f.points})',
+                            style: Theme.of(context).textTheme.bodySmall,
                           ),
-                          const SizedBox(width: 6),
-                          Expanded(
-                            child: Text(
-                              '${f.label} (+${f.points})',
-                              style: Theme.of(context).textTheme.bodySmall,
-                            ),
-                          ),
-                        ],
-                      )),
+                        ),
+                      ],
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -192,21 +207,23 @@ class _WaterCard extends StatelessWidget {
               const Expanded(flex: 3, child: SizedBox()),
               Expanded(
                 flex: 2,
-                child: Text('Current',
-                    textAlign: TextAlign.end,
-                    style: Theme.of(context)
-                        .textTheme
-                        .labelSmall
-                        ?.copyWith(color: Colors.grey)),
+                child: Text(
+                  'Current',
+                  textAlign: TextAlign.end,
+                  style: Theme.of(
+                    context,
+                  ).textTheme.labelSmall?.copyWith(color: Colors.grey),
+                ),
               ),
               Expanded(
                 flex: 2,
-                child: Text('Normal',
-                    textAlign: TextAlign.end,
-                    style: Theme.of(context)
-                        .textTheme
-                        .labelSmall
-                        ?.copyWith(color: Colors.grey)),
+                child: Text(
+                  'Normal',
+                  textAlign: TextAlign.end,
+                  style: Theme.of(
+                    context,
+                  ).textTheme.labelSmall?.copyWith(color: Colors.grey),
+                ),
               ),
             ],
           ),
@@ -233,9 +250,7 @@ class _WaterCard extends StatelessWidget {
               Icon(
                 water.isFlowNearNormal ? Icons.check_circle : Icons.info,
                 size: 16,
-                color: water.isFlowNearNormal
-                    ? AppTheme.accent
-                    : Colors.orange,
+                color: water.isFlowNearNormal ? AppTheme.accent : Colors.orange,
               ),
               const SizedBox(width: 6),
               Text(
@@ -265,19 +280,26 @@ class _WeatherMoonRow extends StatelessWidget {
               title: 'Weather',
               icon: Icons.cloud,
               child: weather == null
-                  ? Text(conditions.weatherError ?? 'Unavailable',
-                      style: Theme.of(context).textTheme.bodySmall)
+                  ? Text(
+                      conditions.weatherError ?? 'Unavailable',
+                      style: Theme.of(context).textTheme.bodySmall,
+                    )
                   : Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('${weather.temperatureC.toStringAsFixed(0)}°C',
-                            style: const TextStyle(
-                                fontSize: 24, fontWeight: FontWeight.bold)),
+                        Text(
+                          '${weather.temperatureC.toStringAsFixed(0)}°C',
+                          style: const TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                         Text(weather.description),
                         const SizedBox(height: 4),
                         Text(
-                            'Wind ${weather.windSpeedKmh.toStringAsFixed(0)} km/h',
-                            style: Theme.of(context).textTheme.bodySmall),
+                          'Wind ${weather.windSpeedKmh.toStringAsFixed(0)} km/h',
+                          style: Theme.of(context).textTheme.bodySmall,
+                        ),
                       ],
                     ),
             ),
@@ -291,13 +313,19 @@ class _WeatherMoonRow extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(moon.phase.emoji, style: const TextStyle(fontSize: 24)),
-                  Text(moon.phase.label,
-                      style: const TextStyle(fontWeight: FontWeight.w600)),
+                  Text(
+                    moon.phase.label,
+                    style: const TextStyle(fontWeight: FontWeight.w600),
+                  ),
                   const SizedBox(height: 4),
-                  Text('${(moon.illumination * 100).toStringAsFixed(0)}% lit',
-                      style: Theme.of(context).textTheme.bodySmall),
-                  Text('Full moon ${daysUntil(moon.nextFullMoon)}',
-                      style: Theme.of(context).textTheme.bodySmall),
+                  Text(
+                    '${(moon.illumination * 100).toStringAsFixed(0)}% lit',
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                  Text(
+                    'Full moon ${daysUntil(moon.nextFullMoon)}',
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
                 ],
               ),
             ),
@@ -319,17 +347,19 @@ class _HatchCard extends StatelessWidget {
           ? const Text('No notable hatches expected this month.')
           : Column(
               children: hatches
-                  .map((h) => Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 4),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: Text('${h.species} (${h.stage.label})'),
-                            ),
-                            _ProbabilityChip(h.probability),
-                          ],
-                        ),
-                      ))
+                  .map(
+                    (h) => Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 4),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Text('${h.species} (${h.stage.label})'),
+                          ),
+                          _ProbabilityChip(h.probability),
+                        ],
+                      ),
+                    ),
+                  )
                   .toList(),
             ),
     );
@@ -353,9 +383,14 @@ class _ProbabilityChip extends StatelessWidget {
         color: color.withValues(alpha: 0.15),
         borderRadius: BorderRadius.circular(12),
       ),
-      child: Text(probability.label,
-          style: TextStyle(
-              color: color, fontSize: 12, fontWeight: FontWeight.w600)),
+      child: Text(
+        probability.label,
+        style: TextStyle(
+          color: color,
+          fontSize: 12,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
     );
   }
 }
@@ -373,11 +408,13 @@ class _FliesCard extends StatelessWidget {
               spacing: 8,
               runSpacing: 8,
               children: flies
-                  .map((f) => Chip(
-                        label: Text(f),
-                        backgroundColor: AppTheme.accent.withValues(alpha: 0.12),
-                        side: BorderSide.none,
-                      ))
+                  .map(
+                    (f) => Chip(
+                      label: Text(f),
+                      backgroundColor: AppTheme.accent.withValues(alpha: 0.12),
+                      side: BorderSide.none,
+                    ),
+                  )
                   .toList(),
             ),
     );

@@ -49,9 +49,11 @@ class RiverService {
     if (query.trim().isEmpty) return rivers;
     final q = query.toLowerCase();
     return rivers
-        .where((r) =>
-            r.name.toLowerCase().contains(q) ||
-            r.country.toLowerCase().contains(q))
+        .where(
+          (r) =>
+              r.name.toLowerCase().contains(q) ||
+              r.country.toLowerCase().contains(q),
+        )
         .toList();
   }
 
@@ -62,7 +64,8 @@ class RiverService {
 
   Future<void> toggleFavorite(String riverId) async {
     final prefs = await SharedPreferences.getInstance();
-    final favorites = (prefs.getStringList(_favoritesKey) ?? <String>[]).toSet();
+    final favorites = (prefs.getStringList(_favoritesKey) ?? <String>[])
+        .toSet();
     if (!favorites.add(riverId)) {
       favorites.remove(riverId);
     }
