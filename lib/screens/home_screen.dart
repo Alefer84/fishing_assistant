@@ -196,12 +196,46 @@ class _ScoreCard extends StatelessWidget {
 class _WaterCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final water = context.watch<AppState>().conditions!.water;
+    final state = context.watch<AppState>();
+    final conditions = state.conditions!;
+    final water = conditions.water;
+    final stations = state.availableStations;
+    final labelStyle = Theme.of(
+      context,
+    ).textTheme.labelSmall?.copyWith(color: Colors.grey);
+
     return SectionCard(
       title: 'Water Conditions',
       icon: Icons.waves,
+      trailing: water.isLive ? const _LiveBadge() : null,
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          if (stations.isNotEmpty) ...[
+            DropdownButtonFormField<String>(
+              initialValue: state.selectedStation?.id,
+              isExpanded: true,
+              decoration: const InputDecoration(
+                labelText: 'IMGW gauge station',
+                prefixIcon: Icon(Icons.sensors),
+                isDense: true,
+              ),
+              items: stations
+                  .map(
+                    (s) => DropdownMenuItem(value: s.id, child: Text(s.name)),
+                  )
+                  .toList(),
+              onChanged: state.loading
+                  ? null
+                  : (id) {
+                      if (id == null) return;
+                      state.selectWaterStation(
+                        stations.firstWhere((s) => s.id == id),
+                      );
+                    },
+            ),
+            const SizedBox(height: 12),
+          ],
           Row(
             children: [
               const Expanded(flex: 3, child: SizedBox()),
@@ -210,9 +244,7 @@ class _WaterCard extends StatelessWidget {
                 child: Text(
                   'Current',
                   textAlign: TextAlign.end,
-                  style: Theme.of(
-                    context,
-                  ).textTheme.labelSmall?.copyWith(color: Colors.grey),
+                  style: labelStyle,
                 ),
               ),
               Expanded(
@@ -220,22 +252,20 @@ class _WaterCard extends StatelessWidget {
                 child: Text(
                   'Normal',
                   textAlign: TextAlign.end,
-                  style: Theme.of(
-                    context,
-                  ).textTheme.labelSmall?.copyWith(color: Colors.grey),
+                  style: labelStyle,
                 ),
               ),
             ],
           ),
           MetricRow(
             label: 'Flow',
-            value: '${water.flowCfs.toStringAsFixed(0)} CFS',
-            comparison: '${water.normalFlowCfs.toStringAsFixed(0)} CFS',
+            value: water.flowDisplay,
+            comparison: water.normalFlowDisplay,
           ),
           MetricRow(
             label: 'Level',
-            value: '${water.levelMeters.toStringAsFixed(2)} m',
-            comparison: '${water.normalLevelMeters.toStringAsFixed(2)} m',
+            value: water.levelDisplay,
+            comparison: water.normalLevelDisplay,
           ),
           if (water.temperatureC != null)
             MetricRow(
@@ -258,6 +288,63 @@ class _WaterCard extends StatelessWidget {
                 style: Theme.of(context).textTheme.bodySmall,
               ),
             ],
+          ),
+          if (water.isLive)
+            Padding(
+              padding: const EdgeInsets.only(top: 6),
+              child: Text(
+                'Source: IMGW • measured ${formatDateTime(water.recordedAt)}',
+                style: Theme.of(
+                  context,
+                ).textTheme.bodySmall?.copyWith(color: Colors.grey.shade600),
+              ),
+            ),
+          if (conditions.waterError != null)
+            Padding(
+              padding: const EdgeInsets.only(top: 6),
+              child: Row(
+                children: [
+                  const Icon(Icons.cloud_off, size: 14, color: Colors.orange),
+                  const SizedBox(width: 6),
+                  Expanded(
+                    child: Text(
+                      conditions.waterError!,
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: Colors.orange.shade800,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+class _LiveBadge extends StatelessWidget {
+  const _LiveBadge();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+      decoration: BoxDecoration(
+        color: AppTheme.accent.withValues(alpha: 0.15),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Icon(Icons.circle, size: 8, color: AppTheme.accent),
+          const SizedBox(width: 4),
+          Text(
+            'LIVE',
+            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+              color: AppTheme.accent,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ],
       ),

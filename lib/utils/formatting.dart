@@ -14,6 +14,8 @@ String formatClock(DateTime? dt) {
 
 String formatDate(DateTime dt) => DateFormat('EEE, d MMM yyyy').format(dt);
 
+String formatDateTime(DateTime dt) => DateFormat('d MMM, HH:mm').format(dt);
+
 String formatShortDate(DateTime dt) => DateFormat('d MMM yyyy').format(dt);
 
 /// Whole days from now until [target].

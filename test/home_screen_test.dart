@@ -29,10 +29,8 @@ void main() {
     final mockClient = MockClient(
       (req) async => http.Response(_weatherJson, 200),
     );
-    final state = AppState(
-      weatherService: WeatherService(client: mockClient),
-    );
-    await state.init();
+    final state = AppState(weatherService: WeatherService(client: mockClient));
+    await state.init(autoRefresh: false);
 
     await tester.pumpWidget(
       ChangeNotifierProvider<AppState>.value(

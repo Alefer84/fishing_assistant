@@ -1,12 +1,16 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 
 import '../models/fishing_log.dart';
 import '../models/hatch.dart';
+import '../models/hydro_station.dart';
 import '../models/moon_info.dart';
 import '../models/river.dart';
 import '../models/water_reading.dart';
 import '../models/weather.dart';
 import '../services/hatch_service.dart';
+import '../services/imgw_hydro_service.dart';
 import '../services/log_service.dart';
 import '../services/moon_service.dart';
 import '../services/river_service.dart';
@@ -24,6 +28,10 @@ class Conditions {
   final Weather? weather;
   final String? weatherError;
 
+  /// Set when the live IMGW gauge could not be reached and a stub reading was
+  /// used instead.
+  final String? waterError;
+
   const Conditions({
     required this.water,
     required this.moon,
@@ -32,6 +40,7 @@ class Conditions {
     required this.score,
     this.weather,
     this.weatherError,
+    this.waterError,
   });
 }
 
@@ -42,7 +51,11 @@ class AppState extends ChangeNotifier {
   final HatchService _hatchService;
   final ScoreService _scoreService;
   final WeatherService _weatherService;
+  final ImgwHydroService _imgwService;
   final LogService _logService;
+
+  /// How often live IMGW data is automatically pulled while the app is open.
+  static const Duration liveRefreshInterval = Duration(hours: 2);
 
   AppState({
     RiverService? riverService,
@@ -51,6 +64,7 @@ class AppState extends ChangeNotifier {
     HatchService? hatchService,
     ScoreService? scoreService,
     WeatherService? weatherService,
+    ImgwHydroService? imgwService,
     LogService? logService,
   }) : _riverService = riverService ?? RiverService(),
        _waterService = waterService ?? const WaterService(),
@@ -58,6 +72,7 @@ class AppState extends ChangeNotifier {
        _hatchService = hatchService ?? const HatchService(),
        _scoreService = scoreService ?? const ScoreService(),
        _weatherService = weatherService ?? WeatherService(),
+       _imgwService = imgwService ?? ImgwHydroService(),
        _logService = logService ?? LogService();
 
   River _selectedRiver = RiverService.rivers.first;
@@ -80,9 +95,43 @@ class AppState extends ChangeNotifier {
   MoonService get moonService => _moonService;
   HatchService get hatchService => _hatchService;
 
-  Future<void> init() async {
+  /// Selected live gauge per river (id of the [HydroStation]).
+  final Map<String, String> _selectedStationByRiver = {};
+  Timer? _refreshTimer;
+
+  /// Live gauge stations available for the selected river (empty if none).
+  List<HydroStation> get availableStations =>
+      ImgwHydroService.stationsForRiver(_selectedRiver.id);
+
+  HydroStation? get selectedStation {
+    final stations = availableStations;
+    if (stations.isEmpty) return null;
+    final id = _selectedStationByRiver[_selectedRiver.id];
+    return ImgwHydroService.stationById(id ?? stations.first.id);
+  }
+
+  Future<void> init({bool autoRefresh = true}) async {
     _favorites = await _riverService.loadFavorites();
     _logs = await _logService.loadLogs();
+    await refreshConditions();
+    if (autoRefresh) {
+      _refreshTimer?.cancel();
+      _refreshTimer = Timer.periodic(
+        liveRefreshInterval,
+        (_) => refreshConditions(),
+      );
+    }
+  }
+
+  @override
+  void dispose() {
+    _refreshTimer?.cancel();
+    super.dispose();
+  }
+
+  Future<void> selectWaterStation(HydroStation station) async {
+    _selectedStationByRiver[_selectedRiver.id] = station.id;
+    notifyListeners();
     await refreshConditions();
   }
 
@@ -107,7 +156,20 @@ class AppState extends ChangeNotifier {
     final now = DateTime.now();
     final river = _selectedRiver;
 
-    final water = _waterService.readingFor(river, now);
+    String? waterError;
+    WaterReading water;
+    final station = selectedStation;
+    if (station != null) {
+      try {
+        water = await _imgwService.fetchStation(station);
+      } catch (e) {
+        waterError = 'Live gauge unavailable; showing estimate';
+        water = _waterService.readingFor(river, now);
+      }
+    } else {
+      water = _waterService.readingFor(river, now);
+    }
+
     final moon = _moonService.compute(
       when: now,
       latitude: river.latitude,
@@ -143,6 +205,7 @@ class AppState extends ChangeNotifier {
       score: score,
       weather: weather,
       weatherError: weatherError,
+      waterError: waterError,
     );
     _loading = false;
     notifyListeners();
