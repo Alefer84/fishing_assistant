@@ -14,6 +14,7 @@ import '../services/hatch_service.dart';
 import '../services/imgw_hydro_service.dart';
 import '../services/log_service.dart';
 import '../services/moon_service.dart';
+import '../services/photo_service.dart';
 import '../services/river_service.dart';
 import '../services/score_service.dart';
 import '../services/water_service.dart';
@@ -67,6 +68,7 @@ class AppState extends ChangeNotifier {
   final WeatherService _weatherService;
   final ImgwHydroService _imgwService;
   final LogService _logService;
+  final PhotoService _photoService;
 
   /// How often live IMGW data is automatically pulled while the app is open.
   static const Duration liveRefreshInterval = Duration(hours: 2);
@@ -80,6 +82,7 @@ class AppState extends ChangeNotifier {
     WeatherService? weatherService,
     ImgwHydroService? imgwService,
     LogService? logService,
+    PhotoService? photoService,
   }) : _riverService = riverService ?? RiverService(),
        _waterService = waterService ?? const WaterService(),
        _moonService = moonService ?? const MoonService(),
@@ -87,7 +90,8 @@ class AppState extends ChangeNotifier {
        _scoreService = scoreService ?? const ScoreService(),
        _weatherService = weatherService ?? WeatherService(),
        _imgwService = imgwService ?? ImgwHydroService(),
-       _logService = logService ?? LogService();
+       _logService = logService ?? LogService(),
+       _photoService = photoService ?? PhotoService();
 
   River _selectedRiver = RiverService.rivers.first;
   River get selectedRiver => _selectedRiver;
@@ -251,8 +255,20 @@ class AppState extends ChangeNotifier {
   }
 
   Future<void> deleteLog(String id) async {
+    final log = _logs.firstWhere(
+      (l) => l.id == id,
+      orElse: () =>
+          FishingLog(id: id, riverId: '', riverName: '', date: DateTime.now()),
+    );
+    await _photoService.deletePhotos(log.photoIds);
     await _logService.deleteLog(id);
     _logs = await _logService.loadLogs();
     notifyListeners();
   }
+
+  /// Stores image bytes locally and returns their ids for a log entry.
+  Future<List<String>> savePhotos(List<Uint8List> images) =>
+      _photoService.savePhotos(images);
+
+  Future<Uint8List?> loadPhoto(String id) => _photoService.loadPhoto(id);
 }

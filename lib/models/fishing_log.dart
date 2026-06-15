@@ -15,6 +15,9 @@ class FishingLog {
   final String? moonPhase;
   final double? moonIllumination;
 
+  /// Identifiers of photos stored locally for this entry.
+  final List<String> photoIds;
+
   const FishingLog({
     required this.id,
     required this.riverId,
@@ -29,6 +32,7 @@ class FishingLog {
     this.notes,
     this.moonPhase,
     this.moonIllumination,
+    this.photoIds = const [],
   });
 
   factory FishingLog.fromJson(Map<String, dynamic> json) => FishingLog(
@@ -45,6 +49,11 @@ class FishingLog {
     notes: json['notes'] as String?,
     moonPhase: json['moon_phase'] as String?,
     moonIllumination: (json['moon_illumination'] as num?)?.toDouble(),
+    photoIds:
+        (json['photo_ids'] as List<dynamic>?)
+            ?.map((e) => e as String)
+            .toList() ??
+        const [],
   );
 
   Map<String, dynamic> toJson() => {
@@ -61,5 +70,6 @@ class FishingLog {
     'notes': notes,
     'moon_phase': moonPhase,
     'moon_illumination': moonIllumination,
+    'photo_ids': photoIds,
   };
 }

@@ -6,6 +6,7 @@ import '../providers/app_state.dart';
 import '../utils/formatting.dart';
 import '../widgets/responsive.dart';
 import 'add_log_screen.dart';
+import 'log_detail_screen.dart';
 
 class LogScreen extends StatelessWidget {
   const LogScreen({super.key});
@@ -70,6 +71,9 @@ class _LogTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       child: ListTile(
+        onTap: () => Navigator.of(
+          context,
+        ).push(MaterialPageRoute(builder: (_) => LogDetailScreen(log: log))),
         title: Text('${log.riverName} • ${formatShortDate(log.date)}'),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -84,6 +88,21 @@ class _LogTile extends StatelessWidget {
                 if (log.moonPhase != null) log.moonPhase,
               ].whereType<String>().join(' • '),
             ),
+            if (log.photoIds.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.only(top: 2),
+                child: Row(
+                  children: [
+                    const Icon(Icons.photo_library_outlined, size: 14),
+                    const SizedBox(width: 4),
+                    Text(
+                      '${log.photoIds.length} '
+                      'photo${log.photoIds.length == 1 ? '' : 's'}',
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                  ],
+                ),
+              ),
             if (log.notes != null && log.notes!.isNotEmpty)
               Text(log.notes!, style: Theme.of(context).textTheme.bodySmall),
           ],
