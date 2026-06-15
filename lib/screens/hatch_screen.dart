@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../models/hatch.dart';
 import '../providers/app_state.dart';
 import '../theme.dart';
+import '../utils/fly_images.dart';
 import '../widgets/responsive.dart';
 import '../widgets/section_card.dart';
 
@@ -84,24 +85,58 @@ class _HatchScreenState extends State<HatchScreen> {
                 title: 'Suggested Flies',
                 icon: Icons.set_meal,
                 child: Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
+                  spacing: 12,
+                  runSpacing: 12,
                   children: state.hatchService
                       .recommendedFlies(river.id, _month)
-                      .map(
-                        (f) => Chip(
-                          label: Text(f),
-                          backgroundColor: AppTheme.accent.withValues(
-                            alpha: 0.12,
-                          ),
-                          side: BorderSide.none,
-                        ),
-                      )
+                      .map((f) => _FlyTile(name: f))
                       .toList(),
                 ),
               ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _FlyTile extends StatelessWidget {
+  const _FlyTile({required this.name});
+
+  final String name;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return SizedBox(
+      width: 104,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(10),
+            child: Container(
+              width: 104,
+              height: 78,
+              color: AppTheme.accent.withValues(alpha: 0.08),
+              child: Image.asset(
+                flyImageAsset(name),
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stack) => const Center(
+                  child: Icon(Icons.set_meal, color: AppTheme.accent),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            name,
+            style: theme.textTheme.bodySmall,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ],
       ),
     );
   }
