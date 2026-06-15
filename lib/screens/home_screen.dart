@@ -256,51 +256,54 @@ class _WeatherMoonRow extends StatelessWidget {
     final conditions = context.watch<AppState>().conditions!;
     final weather = conditions.weather;
     final moon = conditions.moon;
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Expanded(
-          child: SectionCard(
-            title: 'Weather',
-            icon: Icons.cloud,
-            child: weather == null
-                ? Text(conditions.weatherError ?? 'Unavailable',
-                    style: Theme.of(context).textTheme.bodySmall)
-                : Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('${weather.temperatureC.toStringAsFixed(0)}°C',
-                          style: const TextStyle(
-                              fontSize: 24, fontWeight: FontWeight.bold)),
-                      Text(weather.description),
-                      const SizedBox(height: 4),
-                      Text('Wind ${weather.windSpeedKmh.toStringAsFixed(0)} km/h',
-                          style: Theme.of(context).textTheme.bodySmall),
-                    ],
-                  ),
-          ),
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: SectionCard(
-            title: 'Moon',
-            icon: Icons.nightlight_round,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(moon.phase.emoji, style: const TextStyle(fontSize: 24)),
-                Text(moon.phase.label,
-                    style: const TextStyle(fontWeight: FontWeight.w600)),
-                const SizedBox(height: 4),
-                Text('${(moon.illumination * 100).toStringAsFixed(0)}% lit',
-                    style: Theme.of(context).textTheme.bodySmall),
-                Text('Full moon ${daysUntil(moon.nextFullMoon)}',
-                    style: Theme.of(context).textTheme.bodySmall),
-              ],
+    return IntrinsicHeight(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Expanded(
+            child: SectionCard(
+              title: 'Weather',
+              icon: Icons.cloud,
+              child: weather == null
+                  ? Text(conditions.weatherError ?? 'Unavailable',
+                      style: Theme.of(context).textTheme.bodySmall)
+                  : Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('${weather.temperatureC.toStringAsFixed(0)}°C',
+                            style: const TextStyle(
+                                fontSize: 24, fontWeight: FontWeight.bold)),
+                        Text(weather.description),
+                        const SizedBox(height: 4),
+                        Text(
+                            'Wind ${weather.windSpeedKmh.toStringAsFixed(0)} km/h',
+                            style: Theme.of(context).textTheme.bodySmall),
+                      ],
+                    ),
             ),
           ),
-        ),
-      ],
+          const SizedBox(width: 12),
+          Expanded(
+            child: SectionCard(
+              title: 'Moon',
+              icon: Icons.nightlight_round,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(moon.phase.emoji, style: const TextStyle(fontSize: 24)),
+                  Text(moon.phase.label,
+                      style: const TextStyle(fontWeight: FontWeight.w600)),
+                  const SizedBox(height: 4),
+                  Text('${(moon.illumination * 100).toStringAsFixed(0)}% lit',
+                      style: Theme.of(context).textTheme.bodySmall),
+                  Text('Full moon ${daysUntil(moon.nextFullMoon)}',
+                      style: Theme.of(context).textTheme.bodySmall),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
