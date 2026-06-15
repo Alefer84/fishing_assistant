@@ -22,11 +22,12 @@ from datetime import datetime, timezone
 
 API = "https://danepubliczne.imgw.pl/api/data/hydro/id/{station_id}"
 
-# Dunajec gauges surfaced in the app.
+# Gauges surfaced in the app (river name comes from the API response).
 STATIONS = [
     {"id": "149200160", "name": "Krościenko"},
     {"id": "149200140", "name": "Sromowce Wyżne"},
     {"id": "149200190", "name": "Gołkowice"},
+    {"id": "149220060", "name": "Lesko"},
 ]
 
 FIELDS = [

@@ -13,8 +13,9 @@ class ImgwHydroService {
 
   ImgwHydroService({http.Client? client}) : _client = client ?? http.Client();
 
-  /// Live Dunajec gauges selectable in the app.
-  static const List<HydroStation> dunajecStations = [
+  /// Live IMGW gauges selectable in the app, grouped by river.
+  static const List<HydroStation> stations = [
+    // Dunajec
     HydroStation(
       id: '149200160',
       name: 'Krościenko',
@@ -36,15 +37,21 @@ class ImgwHydroService {
       normalLevelCm: 150,
       normalFlowCms: 40,
     ),
+    // San
+    HydroStation(
+      id: '149220060',
+      name: 'Lesko',
+      riverId: 'san',
+      normalLevelCm: 150,
+      normalFlowCms: 18,
+    ),
   ];
 
   static List<HydroStation> stationsForRiver(String riverId) =>
-      dunajecStations.where((s) => s.riverId == riverId).toList();
+      stations.where((s) => s.riverId == riverId).toList();
 
-  static HydroStation stationById(String id) => dunajecStations.firstWhere(
-    (s) => s.id == id,
-    orElse: () => dunajecStations.first,
-  );
+  static HydroStation stationById(String id) =>
+      stations.firstWhere((s) => s.id == id, orElse: () => stations.first);
 
   Future<WaterReading> fetchStation(HydroStation station) async {
     final uri = Uri.https(

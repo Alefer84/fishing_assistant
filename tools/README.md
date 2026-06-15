@@ -2,9 +2,11 @@
 
 ## `imgw_pull.py`
 
-Dependency-free Python script that pulls live water readings for the Dunajec
-IMGW gauges (Krościenko `149200160`, Sromowce Wyżne `149200140`,
-Gołkowice `149200190`) and appends them to `data/imgw_history.csv`.
+Dependency-free Python script that pulls live water readings for the IMGW gauges
+surfaced in the app and appends them to `data/imgw_history.csv`:
+
+- Dunajec: Krościenko `149200160`, Sromowce Wyżne `149200140`, Gołkowice `149200190`
+- San: Lesko `149220060`
 
 ```bash
 python3 tools/imgw_pull.py

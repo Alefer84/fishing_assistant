@@ -64,7 +64,7 @@ void main() {
     );
 
     expect(
-      () => service.fetchStation(ImgwHydroService.dunajecStations.first),
+      () => service.fetchStation(ImgwHydroService.stations.first),
       throwsA(isA<ImgwException>()),
     );
   });
