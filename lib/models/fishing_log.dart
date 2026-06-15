@@ -5,6 +5,7 @@ class FishingLog {
   final DateTime date;
   final String? weather;
   final double? waterLevel;
+  final String? waterConditions;
   final String? flyUsed;
   final String? fishSpecies;
   final int fishCaught;
@@ -25,6 +26,7 @@ class FishingLog {
     required this.date,
     this.weather,
     this.waterLevel,
+    this.waterConditions,
     this.flyUsed,
     this.fishSpecies,
     this.fishCaught = 0,
@@ -42,6 +44,7 @@ class FishingLog {
     date: DateTime.parse(json['date'] as String),
     weather: json['weather'] as String?,
     waterLevel: (json['water_level'] as num?)?.toDouble(),
+    waterConditions: json['water_conditions'] as String?,
     flyUsed: json['fly_used'] as String?,
     fishSpecies: json['fish_species'] as String?,
     fishCaught: (json['fish_caught'] as num?)?.toInt() ?? 0,
@@ -63,6 +66,7 @@ class FishingLog {
     'date': date.toIso8601String(),
     'weather': weather,
     'water_level': waterLevel,
+    'water_conditions': waterConditions,
     'fly_used': flyUsed,
     'fish_species': fishSpecies,
     'fish_caught': fishCaught,

@@ -25,6 +25,7 @@ class _AddLogScreenState extends State<AddLogScreen> {
   DateTime _date = DateTime.now();
   final _weather = TextEditingController();
   final _waterLevel = TextEditingController();
+  String? _waterConditions;
   final _fly = TextEditingController();
   final _species = TextEditingController();
   final _count = TextEditingController(text: '0');
@@ -89,6 +90,7 @@ class _AddLogScreenState extends State<AddLogScreen> {
         date: _date,
         weather: _weather.text.trim().isEmpty ? null : _weather.text.trim(),
         waterLevel: double.tryParse(_waterLevel.text.replaceAll(',', '.')),
+        waterConditions: _waterConditions,
         flyUsed: _fly.text.trim().isEmpty ? null : _fly.text.trim(),
         fishSpecies: _species.text.trim().isEmpty ? null : _species.text.trim(),
         fishCaught: int.tryParse(_count.text) ?? 0,
@@ -162,6 +164,21 @@ class _AddLogScreenState extends State<AddLogScreen> {
                 _waterLevel,
                 'Water level (m)',
                 keyboard: TextInputType.number,
+              ),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: DropdownButtonFormField<String>(
+                  initialValue: _waterConditions,
+                  decoration: const InputDecoration(
+                    labelText: 'Water Conditions',
+                  ),
+                  items: const [
+                    DropdownMenuItem(value: 'Clear', child: Text('Clear')),
+                    DropdownMenuItem(value: 'Murky', child: Text('Murky')),
+                    DropdownMenuItem(value: 'Muddy', child: Text('Muddy')),
+                  ],
+                  onChanged: (v) => setState(() => _waterConditions = v),
+                ),
               ),
               _field(_fly, 'Fly used', hint: 'e.g. BWO Emerger #18'),
               _field(_species, 'Fish species', hint: 'e.g. Brown trout'),

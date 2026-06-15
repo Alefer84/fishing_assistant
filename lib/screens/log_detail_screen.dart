@@ -23,6 +23,8 @@ class LogDetailScreen extends StatelessWidget {
       if (log.weather != null && log.weather!.isNotEmpty)
         _Detail('Weather', log.weather!),
       if (log.waterLevel != null) _Detail('Water level', '${log.waterLevel} m'),
+      if (log.waterConditions != null && log.waterConditions!.isNotEmpty)
+        _Detail('Water conditions', log.waterConditions!),
       if (log.flyUsed != null && log.flyUsed!.isNotEmpty)
         _Detail('Fly used', log.flyUsed!),
       if (log.fishSpecies != null && log.fishSpecies!.isNotEmpty)
